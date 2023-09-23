@@ -44,7 +44,10 @@ else
         --admin_password="$WP_ADMIN_PASS" \
         --admin_email="admin@42.com"
 
+	echo -e "${GREEN} Admin created . . .${RESET}"
+
     wp user create "$WP_USER" "$WP_USER@42.com" --role="editor"
+
     echo -e "${GREEN}WordPress configuration and user setup complete${RESET}"
 fi
 
