@@ -4,6 +4,9 @@ ARG VERSION_ALPINE
 # Use the specified Alpine Linux version as the base image.
 FROM alpine:${VERSION_ALPINE}
 
+# Install the curl package.
+RUN apk add --no-cache curl
+
 # Create a 'www-data' user and group, install required packages, 
 # create a directory for web content, and remove default PHP-FPM configuration.
 RUN adduser -S -G www-data www-data && \
@@ -25,4 +28,5 @@ WORKDIR /var/www/html
 
 # Define the entry point as the setup script and the default command as PHP-FPM.
 ENTRYPOINT ["/tmp/setup_wordpress.sh"]
+
 CMD ["/usr/sbin/php-fpm8", "-F"]

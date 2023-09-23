@@ -40,11 +40,11 @@ else
     wp core install \
         --url="pmeising.42.fr" \
         --title="Inception project" \
-        --admin_user="Plants" \
-        --admin_password="$ADMIN_PASSWORD" \
-        --admin_email="admin@example.com"
+        --admin_user="$WP_ADMIN" \
+        --admin_password="$WP_ADMIN_PASS" \
+        --admin_email="admin@42.com"
 
-    wp user create "pmeising" "pmeising@42.com" --role="editor"
+    wp user create "$WP_USER" "$WP_USER@42.com" --role="editor"
     echo -e "${GREEN}WordPress configuration and user setup complete${RESET}"
 fi
 
