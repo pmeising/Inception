@@ -1,12 +1,10 @@
 #!/bin/sh
 
-# Check if mysqld is not existent, create it
-if [ ! -d /run/mysqld ]; then
+if [ ! -d /run/myysqld ]; then
 	mkdir -p /run/mysqld
 	chown -R mysql:mysql /run/mysqld
 fi
 
-# -d -> exists?
 if [ -d /var/lib/mysql/mysql ]; then
 	echo 'MySQL already initialized'
 	echo 'Skipping configuration...'
@@ -15,8 +13,8 @@ else
 	mkdir -p /var/lib/mysql
 	chown -R mysql:mysql /var/lib/mysql
 
-	# Perform database initialisation / &> /dev/null -> This means that any output from the mysql_install_db command will be discarded.
-	mysql_install_db --user=mysql --datadir=/var/lib/mysql
+	# Perform database initialisation
+	mysql_install_db --user=mysql --datadir=/var/lib/mysql &> /dev/null
 	echo "Initialization successful"
 fi
 
@@ -33,24 +31,17 @@ else
 		return 1
 	fi
 
-
- #############################################
 	echo "Creating tempfile: $tempfile"
-	echo "USE mysql;" >> $tempfile
-	echo "\nFLUSH PRIVILEGES;" >> $tempfile
-	echo "\nDELETE FROM mysql.user WHERE User='';" >> $tempfile
-	echo "DELETE FROM mysql.db WHERE user='' AND db LIKE 'test%';" >> $tempfile
-	echo "USE mysql;" >> $tempfile
-	echo "USE mysql;" >> $tempfile
-	echo "USE mysql;" >> $tempfile
-	
+	cat << EOF > $tempfile
+USE mysql;
+FLUSH PRIVILEGES;
+DELETE FROM mysql.user WHERE User='';
+DELETE FROM mysql.db WHERE user='' AND db LIKE 'test%';
+DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+DROP DATABASE IF EXISTS test;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD' WITH GRANT OPTION;
+EOF
 
-
-	DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
-	DROP DATABASE IF EXISTS test;
-	GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD' WITH GRANT OPTION;
-	EOF
-#########################################
 	echo "Creating database: $MYSQL_DATABASE"
 	echo "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;" >> $tempfile
 
@@ -70,5 +61,4 @@ sed -i "s/skip-networking/#skip-networking/g" /etc/my.cnf.d/mariadb-server.cnf
 echo "[mysqld]\nbind-address=0.0.0.0" >> /etc/my.cnf.d/mariadb-server.cnf
 
 echo 'Starting /usr/bin/mysqld process'
-# $@ -> take every arg that is passed into script (CMD directives in Dockerfile are arguments and get executed)
-exec "$@"
+exec "$@" &> /dev/null
