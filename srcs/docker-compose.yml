@@ -1,69 +1,82 @@
-version: '3'
+version: '3.7'
 
 services:
   nginx:
+    image: nginx
     build:
-      context: .
-      dockerfile: requirements/nginx/Dockerfile
+      context: ./requirements/nginx
+      args:
+        - VERSION_ALPINE=${VERSION_ALPINE}
     container_name: nginx
     depends_on:
       - wordpress
-    ports:
-      - "443:443"
+    restart: on-failure
     networks:
-      - inception
+       - inception_net
+    ports:
+      - 443:443
     volumes:
-      - ./requirements/nginx/conf/:/etc/nginx/http.d/
-      - ./requirements/nginx/tools:/etc/nginx/ssl/
-      - wp-volume:/var/www/
-    restart: always
-
-  mariadb:
-    build:
-      context: .
-      dockerfile: requirements/mariadb/Dockerfile
-      args:
-        DB_NAME: ${DB_NAME}
-        DB_USER: ${DB_USER}
-        DB_PASS: ${DB_PASS}
-        DB_ROOT: ${DB_ROOT}
-    container_name: mariadb
-    ports:
-      - "3306:3306"
-    networks:
-      - inception
-    restart: always
+     - ${VOL_NAME_WP}:${VOL_DIR_DST_WP}
 
   wordpress:
-    build:
-      context: .
-      dockerfile: requirements/wordpress/Dockerfile
-      args:
-        DB_NAME: ${DB_NAME}
-        DB_USER: ${DB_USER}
-        DB_PASS: ${DB_PASS}
-    container_name: wordpress
-    depends_on:
+     image: wordpress
+     build:
+       context: ./requirements/wordpress
+       args:
+        - VERSION_ALPINE=${VERSION_ALPINE}
+     container_name: wordpress
+     depends_on:
       - mariadb
+     restart: on-failure
+     ports:
+       - 9000:9000
+     networks:
+       - inception_net
+     environment:
+      WORDPRESS_DB_PASSWORD: "${DB_PASSWORD}"
+      WORDPRESS_DB_NAME: "${DB_NAME}"
+      WORDPRESS_DB_USER: "${DB_USER}"
+      WORDPRESS_DB_HOST: "${DB_HOST}"
+     volumes:
+      - ${VOL_NAME_WP}:${VOL_DIR_DST_WP}
+       
+  mariadb:
+    container_name: mariadb
+    build:
+      context: ./requirements/mariadb/
+      args:
+        - VERSION_ALPINE=${VERSION_ALPINE}
+      dockerfile: ./Dockerfile
+    image: mariadb
     restart: always
     networks:
-      - inception
+      - inception_net
+    expose:
+      - "3306"
     volumes:
-      - wp-volume:/var/www/
+      - vol_db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_USER: "${DB_USER}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
 
 volumes:
-  wp-volume:
-    driver_opts:
-      o: bind
-      type: none
-      device: /home/${USER}/data/wordpress
-
-  db-volume:
-    driver_opts:
-      o: bind
-      type: none
-      device: /home/${USER}/data/mariadb
+    vol_wp:
+      name: "${VOL_NAME_WP}"
+      driver_opts:
+        type: none
+        o: bind
+        device: ${VOL_DIR_SRC_WP}
+    vol_db:
+      name: "${VOL_NAME_DB}"
+      driver_opts:
+        type: none
+        o: bind
+        device: ${VOL_DIR_SRC_DB}
 
 networks:
-    inception:
-        driver: bridge
+  inception_net:
+    driver: bridge
+
+

@@ -1,26 +1,21 @@
-FROM alpine:3.16
+# ARG supplies the global .env variables to the Docker image scope
+ARG VERSION_ALPINE
 
-ARG DB_NAME \
-    DB_USER \
-    DB_PASS
+# Building image from Alpine version specified in .env file
+FROM alpine:${VERSION_ALPINE}
 
-RUN apk update && apk add --no-cache mariadb mariadb-client
+# Installing mariadb and mariadb-client to interact with database
+RUN apk add --no-cache mariadb mariadb-client
 
-RUN mkdir /var/run/mysqld; \
-    chmod 777 /var/run/mysqld; \
-    { echo '[mysqld]'; \
-      echo 'skip-host-cache'; \
-      echo 'skip-name-resolve'; \
-      echo 'bind-address=0.0.0.0'; \
-    } | tee  /etc/my.cnf.d/docker.cnf; \
-    sed -i "s|skip-networking|skip-networking=0|g" \
-      /etc/my.cnf.d/mariadb-server.cnf
+# in the tools directory we have a script, which is copied into the /tmp directory of the container0
+COPY tools/setup_mariadb.sh /tmp/setup_mariadb.sh
 
-RUN mysql_install_db --user=mysql --datadir=/var/lib/mysql
+# We add execution privileges to that script
+RUN chmod +x /tmp/setup_mariadb.sh
 
-EXPOSE 3306
+# We specify a custom entrypoint script by using the ENTRYPOINT instruction
+ENTRYPOINT ["/tmp/setup_mariadb.sh"]
 
-COPY requirements/mariadb/conf/create_db.sh .
-RUN sh create_db.sh && rm create_db.sh
-USER mysql
-CMD ["/usr/bin/mysqld", "--skip-log-error"]
+# We start the database by executing the mysqld command and specifying the user for it
+# The CMD passed here are passed as arguments to the entrypoint script and executed thereafter
+CMD ["/usr/bin/mysqld", "--user=mysql"]
