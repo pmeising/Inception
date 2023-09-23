@@ -33,12 +33,15 @@ services:
      networks:
        - inception_net
      environment:
-      WORDPRESS_DB_PASSWORD: "${DB_PASS}"
-      WORDPRESS_DB_NAME: "${DB_NAME}"
-      WORDPRESS_DB_USER: "${DB_USER}"
-      WORDPRESS_DB_HOST: "${DB_HOST}"
+      DB_PASS: "${DB_PASS}"
+      DB_NAME: "${DB_NAME}"
+      DB_USER: "${DB_USER}"
+      DB_HOST: "${DB_HOST}"
+      WORDPRESS_URL: "https://pmeising.42.fr"
+      WORDPRESS_TITLE: "Example Title"
       WP_ADMIN: "${WP_ADMIN}"
       WP_ADMIN_PASS: "${WP_ADMIN_PASS}"
+      WP_ADMIN_EMAIL: "admin@example.com"
       WP_USER: "${WP_USER}"
       WP_USER_PASS: "${WP_USER_PASS}"
      volumes:

@@ -1,41 +1,28 @@
-# Define an argument for the Alpine Linux version.
+# Use an official Alpine Linux as a parent image
 ARG VERSION_ALPINE
-
-# Use the specified Alpine Linux version as the base image.
 FROM alpine:${VERSION_ALPINE}
 
-# Install packages.
-RUN apk add --no-cache curl wget tar mariadb-client php8 php8-phar php8-fpm php8-mysqli && \
-    echo "extensions=phar.so" > /etc/php8/conf.d/phar.ini
+# Install PHP8 and other necessary packages
+RUN apk --no-cache add php8 php8-phar php8-fpm php8-mysqli
 
-# Set the PATH environment variable to include the directory containing PHP
+# Set the PATH environment variable to include PHP8 binaries
 ENV PATH="/usr/bin/php8:$PATH"
 
 # Install WP-CLI
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
-    chmod +x wp-cli.phar && \
-    mv wp-cli.phar /usr/local/bin/wp
+RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp && \
+    chmod +x /usr/local/bin/wp
 
-# Create a 'www-data' user and group, 
-# create a directory for web content, and remove default PHP-FPM configuration.
-RUN adduser -S -G www-data www-data && \
-    mkdir -p /var/www/html && \
-    rm -rf /etc/php8/php-fpm.d/*
+# Create a 'www-data' user and group
+RUN adduser -S -G www-data www-data
 
-# Copy a custom PHP-FPM configuration to the container.
-COPY conf/www.conf /etc/php8/php-fpm.d/www.conf
+# Copy the www.conf file for PHP-FPM configuration
+COPY ./conf/www.conf /etc/php8/php-fpm.d/www.conf
 
-# Copy a setup script for WordPress to the container's temporary directory.
-COPY tools/setup_wordpress.sh /tmp/setup_wordpress.sh
-
-# Make the setup script executable.
-RUN chmod +x /tmp/setup_wordpress.sh
-
-# Set the working directory to /var/www/html.
+# Set the working directory to /var/www/html (WordPress directory)
 WORKDIR /var/www/html
 
-# Define the entry point as the setup script and the default command as PHP-FPM.
-ENTRYPOINT ["/tmp/setup_wordpress.sh"]
-
-CMD ["/usr/sbin/php-fpm8", "-F"]
-
+# Define the entry point as the setup script and the default command as PHP-FPM
+COPY ./tools/setup_wordpress.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/setup_wordpress.sh
+ENTRYPOINT ["/usr/local/bin/setup_wordpress.sh"]
+CMD ["php-fpm8", "-F"]
