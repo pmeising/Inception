@@ -4,16 +4,16 @@ if  ! /usr/local/bin/wp --allow-root core --path=/var/www/html is-installed; the
 	/usr/local/bin/wp --path=/var/www/html core download --allow-root
 	echo "************************* Got wordpress *****************************"
 	mv /var/www/html/wp-config-sample.php /var/www/html/wp-config.php
-	sed -i "s/database_name_here/$DB_NAME/g" /var/www/html/wp-config.php
-	sed -i "s/username_here/$DB_USER/g" /var/www/html/wp-config.php
-	sed -i "s/password_here/$DB_PASS/g" /var/www/html/wp-config.php
-	sed -i "s/localhost/$DB_HOST/g" /var/www/html/wp-config.php
+	sed -i "s/database_name_here/$WORDPRESS_DB_NAME/g" /var/www/html/wp-config.php
+	sed -i "s/username_here/$WORDPRESS_DB_USER/g" /var/www/html/wp-config.php
+	sed -i "s/password_here/$WORDPRESS_DB_PASSWORD/g" /var/www/html/wp-config.php
+	sed -i "s/localhost/$WORDPRESS_DB_HOST/g" /var/www/html/wp-config.php
 	while ! wp --allow-root --path=/var/www/html db check; do
 		sleep 20
 	done
 	wp core install --path=/var/www/html --url=mtrietz.42.fr \
 	--title='Wordpress for project inception' \
-	--admin_user=MasterWriter \
+	--admin_user=$WP_ADMIN \
 	--adminpassword=$WP_ADMIN_PASS \
 	--admin_email=pmeising@students.42wolfsburg.de \
 	--allow-root \
