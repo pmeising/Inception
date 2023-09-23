@@ -14,7 +14,7 @@ if  ! /usr/local/bin/wp --allow-root core --path=/var/www/html is-installed; the
 	wp core install --path=/var/www/html --url=mtrietz.42.fr \
 	--title='Wordpress for project inception' \
 	--admin_user=$WP_ADMIN \
-	--adminpassword=$WP_ADMIN_PASS \
+	--admin_password=$WP_ADMIN_PASS \
 	--admin_email=pmeising@students.42wolfsburg.de \
 	--allow-root \
 	--skip-email
