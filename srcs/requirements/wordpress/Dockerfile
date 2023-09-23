@@ -7,6 +7,14 @@ FROM alpine:${VERSION_ALPINE}
 # Install the curl package.
 RUN apk add --no-cache curl
 
+# Set the PATH environment variable to include the directory containing PHP
+ENV PATH="/usr/bin:$PATH"
+
+# Install WP-CLI
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp
+
 # Create a 'www-data' user and group, install required packages, 
 # create a directory for web content, and remove default PHP-FPM configuration.
 RUN adduser -S -G www-data www-data && \
@@ -30,3 +38,4 @@ WORKDIR /var/www/html
 ENTRYPOINT ["/tmp/setup_wordpress.sh"]
 
 CMD ["/usr/sbin/php-fpm8", "-F"]
+

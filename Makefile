@@ -26,16 +26,15 @@ re:
 clean: down
 	@printf "Cleaning configuration ${name}...\n"
 	@docker system prune -a
+	@docker volume rm vol_wp vol_db
 
 
 fclean:
 	@printf "Complete cleanup of all docker configurations\n"
-	@docker stop $(docker ps -qa)
 	@docker system prune --all --force --volumes
 	@docker network prune --force
 	@docker volume prune --force
-	@sudo rm -rf ~/data/wordpress/*
-	@sudo rm -rf ~/data/mariadb/*
+	@sudo rm -rf ~/data/
 
 .PHONY	: all build down re clean fclean
 
