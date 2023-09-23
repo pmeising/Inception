@@ -9,7 +9,7 @@ RUN apk add --no-cache curl wget tar mariadb-client php8 php8-fpm php8-mysqli &&
     echo "extensions=phar.so" > /etc/php8/conf.d/phar.ini
 
 # Set the PATH environment variable to include the directory containing PHP
-ENV PATH="/usr/bin:$PATH"
+ENV PATH="/usr/bin/php8:$PATH"
 
 # Install WP-CLI
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
