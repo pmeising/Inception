@@ -38,6 +38,7 @@ else
 	# Install WordPress and set up initial users
     echo -e "${YELLOW}Setting up initial WordPress users...${RESET}"
     wp core install \
+        --path=/var/www/html \
         --url="pmeising.42.fr" \
         --title="Inception project" \
         --admin_user="$WP_ADMIN" \
@@ -46,7 +47,10 @@ else
 
 	echo -e "${GREEN} Admin created . . .${RESET}"
 
-    wp user create "$WP_USER" "$WP_USER@42.com" --role="editor"
+    wp --path=/var/www/html \
+       user create "$WP_USER" \
+       "$WP_USER@42.com" \
+       --role="editor"
 
     echo -e "${GREEN}WordPress configuration and user setup complete${RESET}"
 fi

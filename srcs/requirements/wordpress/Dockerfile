@@ -5,7 +5,7 @@ ARG VERSION_ALPINE
 FROM alpine:${VERSION_ALPINE}
 
 # Install packages.
-RUN apk add --no-cache curl wget tar mariadb-client php8 php8-fpm php8-mysqli && \
+RUN apk add --no-cache curl wget tar mariadb-client php8 php8-phar php8-fpm php8-mysqli && \
     echo "extensions=phar.so" > /etc/php8/conf.d/phar.ini
 
 # Set the PATH environment variable to include the directory containing PHP
