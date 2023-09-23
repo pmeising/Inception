@@ -46,10 +46,10 @@ else
 	
 
 
-DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
-DROP DATABASE IF EXISTS test;
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD' WITH GRANT OPTION;
-EOF
+	DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');
+	DROP DATABASE IF EXISTS test;
+	GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD' WITH GRANT OPTION;
+	EOF
 #########################################
 	echo "Creating database: $MYSQL_DATABASE"
 	echo "CREATE DATABASE IF NOT EXISTS $MYSQL_DATABASE;" >> $tempfile
