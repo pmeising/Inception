@@ -39,7 +39,7 @@ else
     echo -e "${YELLOW}Setting up initial WordPress users...${RESET}"
     wp core install \
         --path=/var/www/html \
-        --url="pmeising.42.fr" \
+        --url="https://pmeising.42.fr" \
         --title="Inception project" \
         --admin_user="$WP_ADMIN" \
         --admin_password="$WP_ADMIN_PASS" \
