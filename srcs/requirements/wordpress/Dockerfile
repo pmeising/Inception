@@ -2,8 +2,9 @@
 ARG VERSION_ALPINE
 FROM alpine:${VERSION_ALPINE}
 
-# Install PHP8 and other necessary packages
-RUN apk --no-cache add php8 php8-phar php8-fpm php8-mysqli
+# Install PHP8 and other necessary packages, including php8-iconv
+RUN apk --no-cache add php8 php8-phar php8-fpm php8-mysqli php8-iconv
+
 
 # Set the PATH environment variable to include PHP8 binaries
 ENV PATH="/usr/bin/php8:$PATH"
