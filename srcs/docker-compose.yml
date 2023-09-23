@@ -16,7 +16,7 @@ services:
     ports:
       - 443:443
     volumes:
-     - ${VOL_NAME_WP}:${VOL_DIR_DST_WP}
+     - ${WP_VOLUME_SRCDIR}:${WP_VOLUME_DSTDIR}
 
   wordpress:
      image: wordpress
@@ -33,12 +33,12 @@ services:
      networks:
        - inception_net
      environment:
-      WORDPRESS_DB_PASSWORD: "${DB_PASSWORD}"
+      WORDPRESS_DB_PASSWORD: "${DB_PASS}"
       WORDPRESS_DB_NAME: "${DB_NAME}"
       WORDPRESS_DB_USER: "${DB_USER}"
       WORDPRESS_DB_HOST: "${DB_HOST}"
      volumes:
-      - ${VOL_NAME_WP}:${VOL_DIR_DST_WP}
+      - ${WP_VOLUME_SRCDIR}:${WP_VOLUME_DSTDIR}
        
   mariadb:
     container_name: mariadb
@@ -56,24 +56,24 @@ services:
     volumes:
       - vol_db:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASS}"
       MYSQL_DATABASE: "${DB_NAME}"
       MYSQL_USER: "${DB_USER}"
-      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_PASSWORD: "${DB_PASS}"
 
 volumes:
     vol_wp:
-      name: "${VOL_NAME_WP}"
+      name: "${WP_VOLUME}"
       driver_opts:
         type: none
         o: bind
-        device: ${VOL_DIR_SRC_WP}
+        device: ${WP_VOLUME_SRCDIR}
     vol_db:
-      name: "${VOL_NAME_DB}"
+      name: "${DB_VOLUME}"
       driver_opts:
         type: none
         o: bind
-        device: ${VOL_DIR_SRC_DB}
+        device: ${DB_VOLUME_SRCDIR}
 
 networks:
   inception_net:
