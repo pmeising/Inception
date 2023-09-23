@@ -34,6 +34,18 @@ else
     sed -i "s/password_here/$WORDPRESS_DB_PASSWORD/g"  $FILE_PATH_CONFIG_SRC
     sed -i "s/localhost/$WORDPRESS_DB_HOST/g"          $FILE_PATH_CONFIG_SRC
     mv $FILE_PATH_CONFIG_SRC $FILE_PATH_CONFIG_DST
+
+	# Install WordPress and set up initial users
+    echo -e "${YELLOW}Setting up initial WordPress users...${RESET}"
+    wp core install \
+        --url="pmeising.42.fr" \
+        --title="Inception project" \
+        --admin_user="Plants" \
+        --admin_password="$ADMIN_PASSWORD" \
+        --admin_email="admin@example.com"
+
+    wp user create "pmeising" "pmeising@42.com" --role="editor"
+    echo -e "${GREEN}WordPress configuration and user setup complete${RESET}"
 fi
 
 echo -e "${GREEN}Starting /usr/sbin/php-fpm8 process in foreground${RESET}"
