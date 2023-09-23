@@ -4,8 +4,9 @@ ARG VERSION_ALPINE
 # Use the specified Alpine Linux version as the base image.
 FROM alpine:${VERSION_ALPINE}
 
-# Install the curl package.
-RUN apk add --no-cache curl
+# Install packages.
+RUN apk add --no-cache curl wget tar mariadb-client php8 php8-fpm php8-mysqli && \
+    echo "extensions=phar.so" > /etc/php8/conf.d/phar.ini
 
 # Set the PATH environment variable to include the directory containing PHP
 ENV PATH="/usr/bin:$PATH"
@@ -15,10 +16,9 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
     chmod +x wp-cli.phar && \
     mv wp-cli.phar /usr/local/bin/wp
 
-# Create a 'www-data' user and group, install required packages, 
+# Create a 'www-data' user and group, 
 # create a directory for web content, and remove default PHP-FPM configuration.
 RUN adduser -S -G www-data www-data && \
-    apk add --no-cache wget tar mariadb-client php-8 php8-fpm php8-mysqli && \
     mkdir -p /var/www/html && \
     rm -rf /etc/php8/php-fpm.d/*
 

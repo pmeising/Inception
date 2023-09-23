@@ -27,6 +27,7 @@ clean: down
 	@printf "Cleaning configuration ${name}...\n"
 	@docker system prune -a
 	@docker volume rm vol_wp vol_db
+	@sudo rm -rf ~/data/
 
 
 fclean:
