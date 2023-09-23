@@ -27,10 +27,6 @@ if ! wp core is-installed; then
     # Create additional user (change role and credentials as needed)
     wp user create "$WP_USER" "$WP_USER_EMAIL" --role="editor" --user_pass="$WP_USER_PASS"
 
-    # Set ownership and permissions for WordPress files
-    chown -R www-data:www-data /var/www/html/*
-    chmod -R 755 /var/www/html/*
-
 fi
 
 # Start PHP-FPM
