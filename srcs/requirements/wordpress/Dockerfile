@@ -10,7 +10,7 @@ RUN apk add --no-cache curl
 # Create a 'www-data' user and group, install required packages, 
 # create a directory for web content, and remove default PHP-FPM configuration.
 RUN adduser -S -G www-data www-data && \
-    apk add --no-cache wget tar mariadb-client php8-fpm php8-mysqli && \
+    apk add --no-cache wget tar mariadb-client php-8 php8-fpm php8-mysqli && \
     mkdir -p /var/www/html && \
     rm -rf /etc/php8/php-fpm.d/*
 
