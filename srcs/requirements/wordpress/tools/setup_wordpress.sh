@@ -34,11 +34,11 @@ if ! wp core is-installed; then
   echo -e "\e[34mCreating additional user...\e[0m"
 
   # Create additional user (change role and credentials as needed)
-  wp user create "$WP_USER" "$WP_USER_EMAIL" --role="viewer" --user_pass="$WP_USER_PASS"
+  wp user create "$WP_USER" "$WP_USER_EMAIL" --role="editor" --user_pass="$WP_USER_PASS"
 
   # Configure WordPress to have the login page as the default website
-  echo "RewriteEngine on" >> /var/www/html/wordpress/.htaccess
-  echo "RewriteRule ^(.*)$ wp-login.php?redirect_to=$1 [L]" >> /var/www/html/wordpress/.htaccess
+  echo "RewriteEngine on" >> /var/www/html/.htaccess
+  echo "RewriteRule ^(.*)$ wp-login.php?redirect_to=$1 [L]" >> /var/www/html/.htaccess
 
   echo -e "\e[34mWordPress installed and configured successfully!\e[0m"
 

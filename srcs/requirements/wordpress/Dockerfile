@@ -15,7 +15,7 @@ RUN adduser -S -G www-data www-data
 COPY ./conf/www.conf /etc/php8/php-fpm.d/www.conf
 
 # Define the working directory
-WORKDIR /var/www/html/wordpress
+WORKDIR /var/www/html/
 
 # Install WP-CLI
 RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp && \
