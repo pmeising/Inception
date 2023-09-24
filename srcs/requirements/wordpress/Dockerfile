@@ -8,6 +8,9 @@ RUN apk --no-cache add php8 php8-phar php8-fpm php8-mysqli php8-iconv
 # Set the PATH environment variable to include PHP8 binaries
 ENV PATH="/usr/bin/php8:$PATH"
 
+# Create a 'www-data' user and group
+RUN adduser -S -G www-data www-data
+
 # Copy the www.conf file for PHP-FPM configuration
 COPY ./conf/www.conf /etc/php8/php-fpm.d/www.conf
 
